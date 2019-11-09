@@ -5,6 +5,14 @@ Vue.use(VueRouter);
 
 const routes = [
   {
+    path: "/login",
+    name: "login",
+    component: () => import("../views/Login.vue"),
+    meta: {
+      isPublic: true
+    }
+  },
+  {
     path: "/",
     name: "main",
     component: () => import("../views/Main.vue"),
@@ -73,6 +81,19 @@ const routes = [
         path: "/ads/edit/:id",
         component: () => import("../views/AdEdit.vue"),
         props: true
+      },
+      {
+        path: "/admin_users/create",
+        component: () => import("../views/AdminEdit.vue")
+      },
+      {
+        path: "/admin_users/list",
+        component: () => import("../views/AdminList.vue")
+      },
+      {
+        path: "/admin_users/edit/:id",
+        component: () => import("../views/AdminEdit.vue"),
+        props: true
       }
     ]
   }
@@ -80,6 +101,14 @@ const routes = [
 
 const router = new VueRouter({
   routes
+});
+
+router.beforeEach((to, from, next) => {
+  if (!to.meta.isPublic && !localStorage.express_vue_moba_token) {
+    next("/login");
+    // global.console.log("need login");
+  }
+  next();
 });
 
 export default router;

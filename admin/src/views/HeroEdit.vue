@@ -13,15 +13,27 @@
           <el-form-item label="头像">
             <el-upload
               class="avatar-uploader"
-              :action="$http.defaults.baseURL + '/upload'"
+              :action="uploadUrl"
+              :headers="getAuthHeaders()"
               :on-success="afterUpload"
             >
               <img v-if="model.avatar" :src="model.avatar" class="avatar" />
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </el-form-item>
+          <el-form-item label="封面">
+            <el-upload
+              class="avatar-uploader"
+              :action="uploadUrl"
+              :headers="getAuthHeaders()"
+              :on-success="res => $set(model, 'avatar', res.url)"
+            >
+              <img v-if="model.banner" :src="model.avatar" class="avatar" />
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </el-form-item>
           <el-form-item label="类型">
-            <el-select v-model="model.categories" placeholder="选择称号" multiple>
+            <el-select v-model="model.categories" placeholder="选择类型" multiple>
               <el-option
                 v-for="item in categories"
                 :key="item._id"
@@ -79,12 +91,19 @@
               <el-form-item label="图标">
                 <el-upload
                   class="avatar-uploader"
-                  :action="$http.defaults.baseURL + '/upload'"
+                  :action="uploadUrl"
+                  :headers="getAuthHeaders()"
                   :on-success="res => $set(item, 'icon', res.url)"
                 >
                   <img v-if="item.icon" :src="item.icon" class="avatar" />
                   <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                 </el-upload>
+              </el-form-item>
+              <el-form-item label="冷却">
+                <el-input v-model="item.delay"></el-input>
+              </el-form-item>
+              <el-form-item label="消耗">
+                <el-input v-model="item.cost"></el-input>
               </el-form-item>
               <el-form-item label="描述">
                 <el-input type="textarea" v-model="item.description"></el-input>
@@ -180,7 +199,7 @@ export default {
     async fetchCategories() {
       const res = await this.$http.get("rest/categories");
       this.categories = res.data.filter(
-        item => item.parent && item.parent.name === "英雄"
+        item => item.parent && item.parent.name === "英雄分类"
       );
     },
     async fetchItems() {

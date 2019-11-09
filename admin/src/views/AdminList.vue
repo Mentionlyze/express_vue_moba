@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h3>分类列表</h3>
-    <el-table :data="categories">
+    <h3>管理员列表</h3>
+    <el-table :data="users">
       <el-table-column
         v-for="col in fields"
         :key="col._id"
@@ -14,7 +14,7 @@
           <el-button
             type="text"
             size="small"
-            @click="$router.push(`/categories/edit/${row._id}`)"
+            @click="$router.push(`/admin_users/edit/${row._id}`)"
           >编辑</el-button>
           <el-button type="danger" size="small" @click="remove(row)">删除</el-button>
         </template>
@@ -27,23 +27,22 @@
 export default {
   data() {
     return {
-      categories: [],
+      users: [],
       fields: [
         { prop: "_id", label: "ID", width: "320" },
-        { prop: "parent.name", label: "上级分类" },
-        { prop: "name", label: "分类名称" }
+        { prop: "username", label: "账号" }
       ]
     };
   },
   methods: {
     async fetch() {
-      const res = await this.$http.get("rest/categories");
-      this.categories = res.data;
+      const res = await this.$http.get("rest/users");
+      this.users = res.data;
     },
     async remove(row) {
       try {
         await this.$confirm("确认删除吗", "提示");
-        const res = await this.$http.delete(`rest/categories/${row._id}`);
+        const res = await this.$http.delete(`rest/users/${row._id}`);
         if (res) {
           res && this.$message.success("删除成功");
           this.fetch();
